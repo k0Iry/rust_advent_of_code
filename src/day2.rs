@@ -1,5 +1,9 @@
 pub mod day2 {
-    use std::{path::PathBuf, io::{BufReader, BufRead}, fs::File};
+    use std::{
+        fs::File,
+        io::{BufRead, BufReader},
+        path::PathBuf,
+    };
 
     #[derive(PartialEq)]
     enum GameScores {
@@ -25,7 +29,7 @@ pub mod day2 {
         }
     }
 
-    #[derive(PartialEq, Clone, Copy)]
+    #[derive(PartialEq)]
     enum GameOptions {
         Rock,
         Paper,
@@ -49,36 +53,26 @@ pub mod day2 {
         }
 
         fn scores_with_opponent(self, opponent: &Self) -> i32 {
-            let base = self.value();
             match (self, opponent) {
                 (Self::Rock, Self::Paper)
                 | (Self::Paper, Self::Scissors)
-                | (Self::Scissors, Self::Rock) => base + GameScores::Lose.value(),
+                | (Self::Scissors, Self::Rock) => GameScores::Lose.value(),
                 (Self::Rock, Self::Scissors)
                 | (Self::Paper, Self::Rock)
-                | (Self::Scissors, Self::Paper) => base + GameScores::Win.value(),
-                _ => base + GameScores::Draw.value(),
+                | (Self::Scissors, Self::Paper) => GameScores::Win.value(),
+                _ => GameScores::Draw.value(),
             }
         }
 
         fn scores_with_result(self, result: GameScores) -> i32 {
-            let score = result.value();
-            match self {
-                Self::Rock => match result {
-                    GameScores::Lose => Self::Scissors.value() + score,
-                    GameScores::Win => Self::Paper.value() + score,
-                    GameScores::Draw => Self::Rock.value() + score,
-                },
-                Self::Paper => match result {
-                    GameScores::Lose => Self::Rock.value() + score,
-                    GameScores::Win => Self::Scissors.value() + score,
-                    GameScores::Draw => Self::Paper.value() + score,
-                },
-                Self::Scissors => match result {
-                    GameScores::Lose => Self::Paper.value() + score,
-                    GameScores::Win => Self::Rock.value() + score,
-                    GameScores::Draw => Self::Scissors.value() + score,
-                },
+            match (self, result) {
+                (Self::Rock, GameScores::Draw)
+                | (Self::Paper, GameScores::Lose)
+                | (Self::Scissors, GameScores::Win) => Self::Rock.value(),
+                (Self::Rock, GameScores::Win)
+                | (Self::Paper, GameScores::Draw)
+                | (Self::Scissors, GameScores::Lose) => Self::Paper.value(),
+                _ => Self::Scissors.value(),
             }
         }
     }
@@ -97,8 +91,9 @@ pub mod day2 {
                 let v: Vec<&str> = line.split(' ').collect();
                 let me = GameOptions::new(v[1]);
                 let opponent = GameOptions::new(v[0]);
-                scores += me.scores_with_opponent(&opponent);
-                scores2 += opponent.scores_with_result(GameScores::new(v[1]));
+                scores += me.value() + me.scores_with_opponent(&opponent);
+                let round_score = GameScores::new(v[1]);
+                scores2 += round_score.value() + opponent.scores_with_result(round_score);
             }
 
             (scores, scores2)
