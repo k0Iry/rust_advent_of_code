@@ -9,4 +9,7 @@ fn main() {
 
     let (day3_priority1, day3_priority2) = AdventOfCode::day3_sum_priorities();
     println!("day3_sum_priorities: {day3_priority1}, {day3_priority2}");
+
+    let (day4_inclusive, day4_overlapped) = AdventOfCode::day4_fully_contained();
+    println!("day4_fully_contained: {day4_inclusive}, day4_overlapped_pairs: {day4_overlapped}");
 }
