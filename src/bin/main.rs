@@ -12,4 +12,7 @@ fn main() {
 
     let (day4_inclusive, day4_overlapped) = AdventOfCode::day4_fully_contained();
     println!("day4_fully_contained: {day4_inclusive}, day4_overlapped_pairs: {day4_overlapped}");
+
+    let (crate_stacks,crate_stacks2)  = AdventOfCode::day5_rearrange_crates();
+    println!("day5_rearrange_crates: {crate_stacks}, {crate_stacks2}");
 }
