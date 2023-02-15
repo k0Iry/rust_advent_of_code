@@ -62,8 +62,8 @@ pub mod day7 {
             for (_k, v) in dir_sizes {
                 if v <= 100000 {
                     result += v;
-                } else if v >= reserve {
-                    result2 = std::cmp::min(result2, v);
+                } else if v >= reserve && result2 > v {
+                    result2 = v;
                 }
             }
             (result, result2)

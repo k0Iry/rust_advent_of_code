@@ -13,7 +13,7 @@ pub mod day5 {
             let file = BufReader::new(File::open(file_path).unwrap());
 
             let mut line_iter = file.lines();
-            while let Some(line) = line_iter.next() {
+            for line in line_iter.by_ref() {
                 let line = line.unwrap();
                 if line.is_empty() {
                     break;
@@ -62,11 +62,11 @@ pub mod day5 {
 
             let mut result = String::with_capacity(stacks.len());
             for mut stack in stacks {
-                result.push(stack.pop().unwrap_or_else(|| '\0'))
+                result.push(stack.pop().unwrap_or('\0'))
             }
             let split_index = result.len();
             for mut stack in stacks2 {
-                result.push(stack.pop().unwrap_or_else(|| '\0'))
+                result.push(stack.pop().unwrap_or('\0'))
             }
 
             let (part1, part2) = result.split_at(split_index);

@@ -24,9 +24,9 @@ pub mod day6 {
             let mut s: HashMap<u8, usize> = HashMap::new();
             while right - left < marker_type as usize {
                 let c = line.as_bytes().get(right).unwrap();
-                if s.contains_key(&c) {
+                if s.contains_key(c) {
                     let oldleft = left;
-                    left = s.get(&c).unwrap() + 1;
+                    left = s.get(c).unwrap() + 1;
                     for i in oldleft..left {
                         s.remove(line.as_bytes().get(i).unwrap());
                     }
