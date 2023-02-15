@@ -21,4 +21,6 @@ fn main() {
     println!(
         "day6_detect_packet_marker: {position_of_packet_marker}, {position_of_message_marker}"
     );
+    let (sum_of_size, sum_of_delete) = AdventOfCode::day7_sum_of_folders_size();
+    println!("{sum_of_size}, {sum_of_delete}");
 }
