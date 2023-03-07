@@ -26,4 +26,7 @@ fn main() {
 
     let (day8_part1, day8_part2) = AdventOfCode::day8_visible_trees();
     println!("day 8: {day8_part1}, {day8_part2}");
+
+    let day8_visited_pos = AdventOfCode::day9_rope_tail_visits();
+    println!("day 9: {day8_visited_pos}");
 }
