@@ -41,49 +41,67 @@ pub mod day9 {
         }
     }
 
-    #[derive(Default)]
     struct Rope {
-        head: Point,
-        tail: Point,
+        knots: Vec<Point>,
     }
 
     impl Rope {
-        fn need_to_move(&self) -> bool {
-            if self.head.x == self.tail.x {
-                (self.head.y - self.tail.y).abs() > 1
-            } else if self.head.y == self.tail.y {
-                (self.head.x - self.tail.x).abs() > 1
+        fn new(num_knots: usize) -> Self {
+            let knots = vec![Point::default(); num_knots];
+            Self { knots }
+        }
+        fn need_to_move(current: &Point, next: &Point) -> bool {
+            if current.x == next.x {
+                (current.y - next.y).abs() > 1
+            } else if current.y == next.y {
+                (current.x - next.x).abs() > 1
             } else {
-                (self.head.x - self.tail.x).abs() + (self.head.y - self.tail.y).abs() > 2
+                (current.x - next.x).abs() + (current.y - next.y).abs() > 2
             }
         }
         fn move_forward(&mut self, dir: Direction) {
+            let mut knot_iter = self.knots.iter_mut();
+            let mut current = knot_iter.next();
+
+            let mut cur = current.take().unwrap();
             match dir {
-                Direction::Up | Direction::Down => {
-                    self.head.y += dir.offset();
-                    if self.need_to_move() {
-                        self.tail.y = self.head.y - dir.offset();
-                        self.tail.x = self.head.x;
+                Direction::Up | Direction::Down => cur.y += dir.offset(),
+                _ => cur.x += dir.offset(),
+            }
+
+            let mut next = knot_iter.next();
+
+            while next.is_some() {
+                let nex = next.unwrap();
+                if Self::need_to_move(cur, nex) {
+                    let offset_x = std::cmp::min(1, (nex.x - cur.x).abs());
+                    let offset_y = std::cmp::min(1, (nex.y - cur.y).abs());
+                    if nex.x < cur.x {
+                        nex.x += offset_x
+                    } else {
+                        nex.x -= offset_x
                     }
-                }
-                _ => {
-                    self.head.x += dir.offset();
-                    if self.need_to_move() {
-                        self.tail.x = self.head.x - dir.offset();
-                        self.tail.y = self.head.y;
+                    if nex.y < cur.y {
+                        nex.y += offset_y
+                    } else {
+                        nex.y -= offset_y
                     }
+                } else {
+                    break;
                 }
+                cur = nex;
+                next = knot_iter.next();
             }
         }
     }
 
     impl crate::AdventOfCode {
-        pub fn day9_rope_tail_visits() -> u32 {
+        pub fn day9_rope_tail_visits(num_knots: usize) -> u32 {
             let mut file_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
             file_path.push("inputs/day9-input.txt");
             let file = BufReader::new(File::open(file_path).unwrap());
 
-            let mut rope = Rope::default();
+            let mut rope = Rope::new(num_knots);
             let mut visited: HashSet<Point> = HashSet::new();
             for line in file.lines() {
                 let line = line.unwrap();
@@ -93,7 +111,7 @@ pub mod day9 {
                 let steps = splits.last().unwrap().parse::<u8>().unwrap();
                 for _ in 0..steps {
                     rope.move_forward(dir);
-                    visited.insert(rope.tail);
+                    visited.insert(*rope.knots.last().unwrap());
                 }
             }
 
