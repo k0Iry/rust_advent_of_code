@@ -47,23 +47,14 @@ pub mod day9 {
 
     impl Rope {
         fn new(num_knots: usize) -> Self {
-            let knots = vec![Point::default(); num_knots];
-            Self { knots }
-        }
-        fn need_to_move(current: &Point, next: &Point) -> bool {
-            if current.x == next.x {
-                (current.y - next.y).abs() > 1
-            } else if current.y == next.y {
-                (current.x - next.x).abs() > 1
-            } else {
-                (current.x - next.x).abs() + (current.y - next.y).abs() > 2
+            Self {
+                knots: vec![Point::default(); num_knots],
             }
         }
         fn move_forward(&mut self, dir: Direction) {
             let mut knot_iter = self.knots.iter_mut();
-            let mut current = knot_iter.next();
 
-            let mut cur = current.take().unwrap();
+            let mut cur = knot_iter.next().take().unwrap();
             match dir {
                 Direction::Up | Direction::Down => cur.y += dir.offset(),
                 _ => cur.x += dir.offset(),
@@ -73,9 +64,11 @@ pub mod day9 {
 
             while next.is_some() {
                 let nex = next.unwrap();
-                if Self::need_to_move(cur, nex) {
-                    let offset_x = std::cmp::min(1, (nex.x - cur.x).abs());
-                    let offset_y = std::cmp::min(1, (nex.y - cur.y).abs());
+                let diff_x = (nex.x - cur.x).abs();
+                let diff_y = (nex.y - cur.y).abs();
+                if diff_x > 1 || diff_y > 1 {
+                    let offset_x = std::cmp::min(1, diff_x);
+                    let offset_y = std::cmp::min(1, diff_y);
                     if nex.x < cur.x {
                         nex.x += offset_x
                     } else {
