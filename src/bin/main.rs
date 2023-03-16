@@ -30,4 +30,7 @@ fn main() {
     let day9_visited_pos_part1 = AdventOfCode::day9_rope_tail_visits(2);
     let day9_visited_pos_part2 = AdventOfCode::day9_rope_tail_visits(10);
     println!("day 9: {day9_visited_pos_part1}, {day9_visited_pos_part2}");
+
+    let (day10_sig_strength, crt_screen) = AdventOfCode::day10_signal_strength_crt_screen();
+    println!("day 10, signal strength: {day10_sig_strength}, and CRT screen:\n{crt_screen}");
 }
