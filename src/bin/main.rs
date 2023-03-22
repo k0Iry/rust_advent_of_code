@@ -33,4 +33,7 @@ fn main() {
 
     let (day10_sig_strength, crt_screen) = AdventOfCode::day10_signal_strength_crt_screen();
     println!("day 10, signal strength: {day10_sig_strength}, and CRT screen:\n{crt_screen}");
+
+    let day11 = AdventOfCode::day11_monkey_business();
+    println!("Day 11 monkey_business_part1: {day11}")
 }

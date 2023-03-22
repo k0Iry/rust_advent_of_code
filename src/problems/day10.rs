@@ -7,6 +7,7 @@ pub mod day10 {
 
     const ROWS: i32 = 6;
     const COLUMNS: i32 = 40;
+    const TOTAL_PIXELS: i32 = ROWS * COLUMNS;
 
     pub struct Screen {
         crt: [[char; COLUMNS as usize]; ROWS as usize],
@@ -32,7 +33,7 @@ pub mod day10 {
             }
         }
         fn draw(&mut self) {
-            if self.current_pos < COLUMNS * ROWS {
+            if self.current_pos < TOTAL_PIXELS {
                 let row = self.current_pos / COLUMNS;
                 let cursor = self.current_pos % COLUMNS;
                 if cursor.abs_diff(self.sprite) <= 1 {
