@@ -36,31 +36,31 @@ pub mod day11 {
         inspects: RefCell<i32>,
     }
 
-    // impl std::fmt::Display for Monkey {
-    //     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    //         writeln!(f, "items: {:#?}", self.items.borrow())?;
-    //         writeln!(
-    //             f,
-    //             "operation: {:#?}, divisor: {}",
-    //             self.operation, self.divisor
-    //         )?;
-    //         writeln!(f, "neighbors: {:?}\n", self.neighbors)
-    //     }
-    // }
-
-    impl Monkey {
-        fn operate_on_item(&self, item: i32) -> i32 {
-            match self.operation {
+    impl Operation {
+        fn operate_on_item(self, item: i32, gcd: Option<i32>) -> i32 {
+            match self {
                 Operation::Plus(x) => {
                     if x < 0 {
-                        ((2 * item) as f32 / 3.0).floor() as i32
+                        if gcd.is_some() {
+                            2 * item
+                        } else {
+                            ((2 * item) as f32 / 3.0).floor() as i32
+                        }
+                    } else if gcd.is_some() {
+                        (item + x) % gcd.unwrap()
                     } else {
                         ((item + x) as f32 / 3.0).floor() as i32
                     }
                 }
                 Operation::Multiply(x) => {
                     if x < 0 {
-                        ((item * item) as f32 / 3.0).floor() as i32
+                        if let Some(gcd) = gcd {
+                            ((item as i64 * item as i64) % gcd as i64) as i32
+                        } else {
+                            ((item * item) as f32 / 3.0).floor() as i32
+                        }
+                    } else if gcd.is_some() {
+                        item * x
                     } else {
                         ((item * x) as f32 / 3.0).floor() as i32
                     }
@@ -68,12 +68,14 @@ pub mod day11 {
                 _ => panic!("unsupported operation"),
             }
         }
+    }
 
-        fn take_round(&self) -> Vec<(i32, i32)> {
+    impl Monkey {
+        fn take_round(&self, gcd: Option<i32>) -> Vec<(i32, i32)> {
             let mut items_to_sent = vec![];
             *self.inspects.borrow_mut() += self.items.borrow().len() as i32;
             for item in &*self.items.borrow() {
-                let worry_level = self.operate_on_item(*item);
+                let worry_level = self.operation.operate_on_item(*item, gcd);
                 if worry_level % self.divisor == 0 {
                     items_to_sent.push((worry_level, self.neighbors[0]))
                 } else {
@@ -88,23 +90,25 @@ pub mod day11 {
     struct Monkeys(Vec<Monkey>);
 
     impl Monkeys {
-        fn take_rounds(&self) {
-            for monkey in &self.0 {
-                let distribution_plans = monkey.take_round();
-                for (worry_level, neighbor) in distribution_plans {
-                    self.0
-                        .get(neighbor as usize)
-                        .unwrap()
-                        .items
-                        .borrow_mut()
-                        .push(worry_level);
+        fn take_rounds(&self, num_rounds: i32, gcd: Option<i32>) {
+            for _ in 0..num_rounds {
+                for monkey in &self.0 {
+                    let distribution_plans = monkey.take_round(gcd);
+                    for (worry_level, neighbor) in distribution_plans {
+                        self.0
+                            .get(neighbor as usize)
+                            .unwrap()
+                            .items
+                            .borrow_mut()
+                            .push(worry_level);
+                    }
                 }
             }
         }
     }
 
     impl crate::AdventOfCode {
-        pub fn day11_monkey_business() -> i32 {
+        pub fn day11_monkey_business(num_rounds: i32, no_relief: bool) -> i64 {
             let mut file_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
             file_path.push("inputs/day11-input.txt");
             let file = BufReader::new(File::open(file_path).unwrap());
@@ -114,6 +118,7 @@ pub mod day11 {
             let mut operation = Operation::Unknown;
             let mut neighbors = [0; 2];
             let mut divisor = 0;
+            let mut gcd = 1;
             for line in file.lines() {
                 let line = line.unwrap();
 
@@ -132,6 +137,7 @@ pub mod day11 {
                         .unwrap()
                         .parse::<i32>()
                         .unwrap();
+                    gcd *= divisor;
                 } else if splits[0].starts_with("If true") {
                     neighbors[0] = splits[1]
                         .split_whitespace()
@@ -157,18 +163,20 @@ pub mod day11 {
             }
 
             let monkeys = Monkeys(monkeys);
-            for _ in 0..20 {
-                monkeys.take_rounds();
-            }
+            monkeys.take_rounds(num_rounds, if no_relief { Some(gcd) } else { None });
+
             let mut max = 0;
             let mut second_max = 0;
             for monkey in monkeys.0 {
-                if max <= *monkey.inspects.borrow() {
+                let inspect = *monkey.inspects.borrow();
+                if max <= inspect {
                     second_max = max;
-                    max = *monkey.inspects.borrow();
+                    max = inspect;
+                } else if inspect > second_max && inspect != max {
+                    second_max = inspect;
                 }
             }
-            max * second_max
+            (max as i64) * (second_max as i64)
         }
     }
 }
