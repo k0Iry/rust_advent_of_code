@@ -37,29 +37,29 @@ pub mod day11 {
     }
 
     impl Operation {
-        fn operate_on_item(self, item: i32, gcd: Option<i32>) -> i32 {
+        fn operate_on_item(self, item: i32, lcm: Option<i32>) -> i32 {
             match self {
                 Operation::Plus(x) => {
                     if x < 0 {
-                        if gcd.is_some() {
+                        if lcm.is_some() {
                             2 * item
                         } else {
                             ((2 * item) as f32 / 3.0).floor() as i32
                         }
-                    } else if gcd.is_some() {
-                        (item + x) % gcd.unwrap()
+                    } else if lcm.is_some() {
+                        (item + x) % lcm.unwrap()
                     } else {
                         ((item + x) as f32 / 3.0).floor() as i32
                     }
                 }
                 Operation::Multiply(x) => {
                     if x < 0 {
-                        if let Some(gcd) = gcd {
-                            ((item as i64 * item as i64) % gcd as i64) as i32
+                        if let Some(lcm) = lcm {
+                            ((item as i64 * item as i64) % lcm as i64) as i32
                         } else {
                             ((item * item) as f32 / 3.0).floor() as i32
                         }
-                    } else if gcd.is_some() {
+                    } else if lcm.is_some() {
                         item * x
                     } else {
                         ((item * x) as f32 / 3.0).floor() as i32
@@ -71,11 +71,11 @@ pub mod day11 {
     }
 
     impl Monkey {
-        fn take_round(&self, gcd: Option<i32>) -> Vec<(i32, i32)> {
+        fn take_round(&self, lcm: Option<i32>) -> Vec<(i32, i32)> {
             let mut items_to_sent = vec![];
             *self.inspects.borrow_mut() += self.items.borrow().len() as i32;
             for item in &*self.items.borrow() {
-                let worry_level = self.operation.operate_on_item(*item, gcd);
+                let worry_level = self.operation.operate_on_item(*item, lcm);
                 if worry_level % self.divisor == 0 {
                     items_to_sent.push((worry_level, self.neighbors[0]))
                 } else {
@@ -90,10 +90,10 @@ pub mod day11 {
     struct Monkeys(Vec<Monkey>);
 
     impl Monkeys {
-        fn take_rounds(&self, num_rounds: i32, gcd: Option<i32>) {
+        fn take_rounds(&self, num_rounds: i32, lcm: Option<i32>) {
             for _ in 0..num_rounds {
                 for monkey in &self.0 {
-                    let distribution_plans = monkey.take_round(gcd);
+                    let distribution_plans = monkey.take_round(lcm);
                     for (worry_level, neighbor) in distribution_plans {
                         self.0
                             .get(neighbor as usize)
@@ -118,7 +118,7 @@ pub mod day11 {
             let mut operation = Operation::Unknown;
             let mut neighbors = [0; 2];
             let mut divisor = 0;
-            let mut gcd = 1;
+            let mut lcm = 1;
             for line in file.lines() {
                 let line = line.unwrap();
 
@@ -137,7 +137,7 @@ pub mod day11 {
                         .unwrap()
                         .parse::<i32>()
                         .unwrap();
-                    gcd *= divisor;
+                    lcm *= divisor;
                 } else if splits[0].starts_with("If true") {
                     neighbors[0] = splits[1]
                         .split_whitespace()
@@ -163,7 +163,7 @@ pub mod day11 {
             }
 
             let monkeys = Monkeys(monkeys);
-            monkeys.take_rounds(num_rounds, if no_relief { Some(gcd) } else { None });
+            monkeys.take_rounds(num_rounds, if no_relief { Some(lcm) } else { None });
 
             let mut max = 0;
             let mut second_max = 0;
