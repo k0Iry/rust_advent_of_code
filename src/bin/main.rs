@@ -36,5 +36,8 @@ fn main() {
 
     let day11_part1 = AdventOfCode::day11_monkey_business(20, false);
     let day11_part2 = AdventOfCode::day11_monkey_business(10000, true);
-    println!("Day 11 monkey_business: part1: {day11_part1}, part2: {day11_part2}")
+    println!("Day 11 monkey_business: part1: {day11_part1}, part2: {day11_part2}");
+
+    let day12_part1 = AdventOfCode::day12_best_signal();
+    println!("Day 12 steps to get best signal: {day12_part1}");
 }

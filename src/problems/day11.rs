@@ -46,8 +46,8 @@ pub mod day11 {
                         } else {
                             ((2 * item) as f32 / 3.0).floor() as i32
                         }
-                    } else if lcm.is_some() {
-                        (item + x) % lcm.unwrap()
+                    } else if let Some(lcm) = lcm {
+                        (item + x) % lcm
                     } else {
                         ((item + x) as f32 / 3.0).floor() as i32
                     }
