@@ -40,4 +40,7 @@ fn main() {
 
     let (day12_part1, day12_part2) = AdventOfCode::day12_best_signal();
     println!("Day 12 steps to get best signal: {day12_part1}, {day12_part2}");
+
+    let day13 = AdventOfCode::day13_right_order();
+    println!("Day 13 orders part1: {day13}");
 }
