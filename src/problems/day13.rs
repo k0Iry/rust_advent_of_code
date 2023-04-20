@@ -65,15 +65,14 @@ pub mod day13 {
             file_path.push("inputs/day13-input.txt");
             let file = BufReader::new(File::open(file_path).unwrap());
             let mut iter = file.lines();
-            let mut p1 = iter.next();
-            let mut p2 = iter.next();
+
             let mut result = 0;
 
             let mut index = 0;
-            while p1.is_some() && p2.is_some() {
+            while let (Some(Ok(p1)), Some(Ok(p2))) = (iter.next(), iter.next()) {
                 index += 1;
-                let left = p1.unwrap().unwrap().replace("10", "T");
-                let right = p2.unwrap().unwrap().replace("10", "T");
+                let left = p1.replace("10", "T");
+                let right = p2.replace("10", "T");
 
                 if PacketData::new(&left, 0)
                     .0
@@ -84,8 +83,6 @@ pub mod day13 {
                 }
 
                 iter.next();
-                p1 = iter.next();
-                p2 = iter.next();
             }
             result
         }
