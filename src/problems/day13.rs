@@ -6,27 +6,17 @@ pub mod day13 {
         path::PathBuf,
     };
 
-    #[derive(Clone, PartialEq, PartialOrd, Eq)]
+    #[derive(Clone, PartialEq, Eq)]
     enum PacketData {
         Integer(u32),
         List(Vec<PacketData>),
     }
 
-    // impl Display for PacketData {
-    //     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    //         match self {
-    //             PacketData::Integer(i) => write!(f, "{i}"),
-    //             PacketData::List(v) => {
-    //                 write!(f, "[")?;
-    //                 for packet in v {
-    //                     packet.fmt(f).unwrap();
-    //                 }
-    //                 write!(f, "]")?;
-    //                 Ok(())
-    //             }
-    //         }
-    //     }
-    // }
+    impl PartialOrd for PacketData {
+        fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+            Some(self.cmp(other))
+        }
+    }
 
     impl Ord for PacketData {
         fn cmp(&self, other: &Self) -> Ordering {
@@ -106,7 +96,7 @@ pub mod day13 {
                 iter.next();
             }
 
-            packets.sort_by(|a, b| a.cmp(b));
+            packets.sort();
 
             let div1_packet =
                 PacketData::List(vec![PacketData::List(vec![PacketData::Integer(2)])]);
