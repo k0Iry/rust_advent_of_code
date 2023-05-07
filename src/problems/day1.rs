@@ -13,22 +13,22 @@ pub mod day1 {
             let file = BufReader::new(File::open(file_path).unwrap());
             let mut min_heap = BinaryHeap::new();
             let mut calories = 0;
-            for line in file.lines() {
-                let line = line.unwrap();
-                if line.is_empty() {
-                    min_heap.push(-calories);
-                    if min_heap.len() > 3 {
-                        min_heap.pop();
+            file.lines().for_each(|line| {
+                if let Ok(line) = line {
+                    if let Ok(calorie) = line.parse::<i32>() {
+                        calories += calorie
+                    } else {
+                        min_heap.push(-calories);
+                        if min_heap.len() > 3 {
+                            min_heap.pop();
+                        }
+                        calories = 0;
                     }
-                    calories = 0;
-                } else {
-                    calories += line.parse::<i32>().unwrap()
                 }
-            }
+            });
             let mut sum = 0;
             let mut max = 0;
-            while !min_heap.is_empty() {
-                let top = min_heap.pop().unwrap();
+            while let Some(top) = min_heap.pop() {
                 sum += top;
                 max = top;
             }

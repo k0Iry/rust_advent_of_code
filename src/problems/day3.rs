@@ -25,7 +25,7 @@ pub mod day3 {
 
             let mut count = 0;
             let mut alpha_groups = [0i8; 128];
-            for line in file.lines() {
+            file.lines().for_each(|line| {
                 count += 1;
                 let line = line.unwrap();
                 let mut alphas = [0i8; 128];
@@ -50,16 +50,16 @@ pub mod day3 {
                 }
                 let (first, second) = line.split_at(line.len() / 2);
                 alphas = [0i8; 128];
-                for character in first.chars() {
+                first.chars().for_each(|character| {
                     alphas[character as usize] = 1;
-                }
+                });
                 for character in second.chars() {
                     if alphas[character as usize] == 1 {
                         priorities += get_priority(character);
                         break;
                     }
                 }
-            }
+            });
             (priorities, priorities2)
         }
     }

@@ -35,7 +35,7 @@ pub mod day4 {
 
             let mut inclusive_pairs = 0;
             let mut overlapped_pairs = 0;
-            for line in file.lines() {
+            file.lines().for_each(|line| {
                 let line = line.unwrap();
                 let pairs: Vec<&str> = line.split([',', '-']).collect();
                 let pair1 = SectionRange::new(
@@ -52,7 +52,7 @@ pub mod day4 {
                     }
                     overlapped_pairs += 1;
                 }
-            }
+            });
 
             (inclusive_pairs, overlapped_pairs)
         }
