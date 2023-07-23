@@ -132,20 +132,16 @@ pub mod day8 {
                     }
                     mono_stack_top.push(col);
                 }
-                while !mono_stack_right.is_empty() {
-                    let prev = mono_stack_right.pop().unwrap();
+                while let Some(prev) = mono_stack_right.pop() {
                     scenic_scores[row][prev].right_visible = (SIDE_LENGTH - 1 - prev) as u8;
                 }
-                while !mono_stack_left.is_empty() {
-                    let next = mono_stack_left.pop().unwrap();
+                while let Some(next) = mono_stack_left.pop() {
                     scenic_scores[row][next].left_visible = next as u8;
                 }
-                while !mono_stack_bottom.is_empty() {
-                    let prev = mono_stack_bottom.pop().unwrap();
+                while let Some(prev) = mono_stack_bottom.pop() {
                     scenic_scores[prev][row].bottom_visible = (SIDE_LENGTH - 1 - prev) as u8;
                 }
-                while !mono_stack_top.is_empty() {
-                    let next = mono_stack_top.pop().unwrap();
+                while let Some(next) = mono_stack_top.pop() {
                     scenic_scores[next][row].top_visible = next as u8;
                 }
             }

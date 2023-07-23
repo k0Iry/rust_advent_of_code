@@ -57,7 +57,7 @@ pub mod day11 {
                         if let Some(lcm) = lcm {
                             ((item as i64 * item as i64) % lcm as i64) as i32
                         } else {
-                            ((item * item) as f32 / 3.0).floor() as i32
+                            ((item as f32 * item as f32) / 3.0).floor() as i32
                         }
                     } else if lcm.is_some() {
                         item * x
